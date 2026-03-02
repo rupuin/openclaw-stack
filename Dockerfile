@@ -28,7 +28,7 @@ RUN mkdir -p /home/node/.openclaw/workspace \
  && chown -R node:node /home/node
 
 USER node
-ORKDIR /home/node
+WORKDIR /home/node
 
 EXPOSE 18789 18790
 
