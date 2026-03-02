@@ -1,0 +1,53 @@
+name: oc
+
+services:
+  gateway:
+    image: ${OPENCLAW_IMAGE:-openclaw:local}
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
+    ports:
+      - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+      - "${OPENCLAW_BRIDGE_PORT:-18790}:18790"
+    init: true
+    restart: unless-stopped
+    command: ["gateway", "--bind", "lan", "--port", "18789"]
+
+  executor:
+    build:
+      context: .
+      dockerfile: Dockerfile.executor
+    image: executor:local
+    env_file: .env
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      SCRAPLING_MCP_URL: ${SCRAPLING_MCP_URL:-http://scrapling:8000/mcp}
+      BRAVE_API_KEY: ${BRAVE_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
+    init: true
+    restart: unless-stopped
+    command: ["python3", "-m", "uvicorn", "skills.recruitee.worker.app:app", "--host", "0.0.0.0", "--port", "8080"]
+    working_dir: /home/node/.openclaw/workspace
+
+  scrapling:
+    image: ghcr.io/d4vinci/scrapling:latest
+    environment:
+      UV_LINK_MODE: copy
+    command: ["mcp", "--http", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+    init: true
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR}/state/scrapling:/root/.cache  
+
