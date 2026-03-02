@@ -3,7 +3,7 @@ name: oc
 services:
   gateway:
     image: ${OPENCLAW_IMAGE:-openclaw:local}
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     env_file: .env
@@ -38,16 +38,27 @@ services:
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
     init: true
     restart: unless-stopped
-    command: ["python3", "-m", "uvicorn", "skills.recruitee.worker.app:app", "--host", "0.0.0.0", "--port", "8080"]
+    command:
+      [
+        "python3",
+        "-m",
+        "uvicorn",
+        "skills.recruitee.worker.app:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080",
+      ]
     working_dir: /home/node/.openclaw/workspace
 
   scrapling:
     image: ghcr.io/d4vinci/scrapling:latest
+    expose:
+      - "8000"
     environment:
       UV_LINK_MODE: copy
     command: ["mcp", "--http", "--host", "0.0.0.0", "--port", "8000"]
     restart: unless-stopped
     init: true
     volumes:
-      - ${OPENCLAW_CONFIG_DIR}/state/scrapling:/root/.cache  
-
+      - ${OPENCLAW_CONFIG_DIR}/state/scrapling:/root/.cache
