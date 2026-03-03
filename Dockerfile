@@ -38,12 +38,12 @@ RUN ln -sf /usr/bin/fdfind /usr/local/bin/fd
 # --- whisper-cli ---
 COPY --from=whisper_builder /src/whisper.cpp/build/bin/whisper-cli /usr/local/bin/whisper-cli
 
-# --- Whisper model (kept in image) ---
-ARG WHISPER_MODEL_URL="https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin"
-RUN mkdir -p /opt/whisper/models \
-  && curl -L "${WHISPER_MODEL_URL}" -o /opt/whisper/models/ggml-base.en.bin
+# whisper.cpp shared libs (paths are from the default CMake layout)
+COPY --from=whisper_builder /src/whisper.cpp/build/src/libwhisper.so* /usr/local/lib/
+COPY --from=whisper_builder /src/whisper.cpp/build/ggml/src/libggml*.so* /usr/local/lib/
 
-ENV WHISPER_CPP_MODEL=/opt/whisper/models/ggml-base.en.bin
+# refresh linker cache 
+RUN ldconfig
 
 # --- gogcli (Gmail/Workspace CLI) ---
 ARG GOG_VERSION=0.11.0
