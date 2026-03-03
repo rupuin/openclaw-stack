@@ -52,7 +52,7 @@ RUN curl -L "https://github.com/steipete/gogcli/releases/latest/download/gogcli_
   && chmod +x /usr/local/bin/gog
 
 # --- OpenClaw ---
-ARG OPENCLAW_VERSION=2026.3.1
+ARG OPENCLAW_VERSION=2026.3.2
 RUN npm install -g "openclaw@${OPENCLAW_VERSION}"
 
 ENV NODE_ENV=production \
