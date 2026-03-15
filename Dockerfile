@@ -5,7 +5,7 @@
 ARG WHISPER_CPP_REF=master
 ARG WHISPER_MODEL_URL="https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin"
 ARG GOG_VERSION=0.11.0
-ARG OPENCLAW_VERSION=2026.3.2
+ARG OPENCLAW_VERSION=2026.3.13
 
 ############################
 # 1) Build whisper.cpp (whisper-cli)
@@ -85,7 +85,7 @@ RUN curl -fsSL \
     && gog --version
 
 # ---- OpenClaw ----
-ARG OPENCLAW_VERSION=2026.3.2
+ARG OPENCLAW_VERSION
 RUN npm install -g "openclaw@${OPENCLAW_VERSION}"
 
 # ---- Runtime environment ----
