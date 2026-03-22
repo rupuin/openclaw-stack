@@ -43,7 +43,7 @@ RUN ldd build/bin/whisper-cli || true
 ############################
 # 2) Runtime image (OpenClaw)
 ############################
-FROM node:22-bookworm-slim
+FROM node:25-bookworm-slim
 
 # Re-declare ARGs needed in this stage
 ARG WHISPER_MODEL_URL
